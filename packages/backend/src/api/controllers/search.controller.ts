@@ -11,7 +11,7 @@ export class SearchController {
 
 	public search = async (req: Request, res: Response): Promise<void> => {
 		try {
-			const { keywords, page, limit, matchingStrategy } = req.query;
+			const { keywords, page, limit, matchingStrategy, filter } = req.query;
 			const userId = req.user?.sub;
 
 			if (!userId) {
@@ -30,6 +30,7 @@ export class SearchController {
 					page: page ? parseInt(page as string) : 1,
 					limit: limit ? parseInt(limit as string) : 10,
 					matchingStrategy: matchingStrategy as MatchingStrategies,
+					filter: filter as string | undefined,
 				},
 				userId,
 				req.ip || 'unknown'

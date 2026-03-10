@@ -26,6 +26,7 @@
 	let keywords = $state(data.keywords || '');
 	let page = $derived(data.page);
 	let error = $derived(data.error);
+	let filter = $derived(data.filter || '');
 	let matchingStrategy: MatchingStrategy = $state(
 		(data.matchingStrategy as MatchingStrategy) || 'last'
 	);
@@ -45,6 +46,59 @@
 	onMount(() => {
 		isMounted = true;
 	});
+
+	interface ParsedSearchInput {
+		keywords: string;
+		filter: string;
+	}
+
+	function parseSearchInput(input: string): ParsedSearchInput {
+		const filterParts: string[] = [];
+		const fieldMap: Record<string, string> = {
+			from: 'from',
+			to: 'to',
+			cc: 'cc',
+			bcc: 'bcc',
+			source: 'ingestionSourceId',
+		};
+
+		// Escape single quotes in a filter value by doubling them (Meilisearch syntax).
+		function escapeFilterValue(val: string): string {
+			return val.replace(/'/g, "''");
+		}
+
+		// Match prefix:value or prefix:"quoted value"
+		const filterRegex =
+			/\b(from|to|cc|bcc|after|before|source):(?:"([^"]*)"|([\S]+))/g;
+
+		const remaining = input.replace(
+			filterRegex,
+			(_match, prefix: string, quotedValue: string | undefined, unquotedValue: string | undefined) => {
+				const value = quotedValue !== undefined ? quotedValue : (unquotedValue ?? '');
+
+				if (prefix === 'after') {
+					const timestamp = Math.floor(new Date(value).getTime() / 1000);
+					if (!isNaN(timestamp)) {
+						filterParts.push(`timestamp >= ${timestamp}`);
+					}
+				} else if (prefix === 'before') {
+					const timestamp = Math.floor(new Date(value).getTime() / 1000);
+					if (!isNaN(timestamp)) {
+						filterParts.push(`timestamp <= ${timestamp}`);
+					}
+				} else {
+					const field = fieldMap[prefix];
+					filterParts.push(`${field} = '${escapeFilterValue(value)}'`);
+				}
+				return '';
+			}
+		);
+
+		return {
+			keywords: remaining.trim().replace(/\s+/g, ' '),
+			filter: filterParts.join(' AND '),
+		};
+	}
 
 	function shadowRender(node: HTMLElement, html: string | undefined) {
 		if (html === undefined) return;
@@ -67,10 +121,14 @@
 
 	function handleSearch(e: SubmitEvent) {
 		e.preventDefault();
+		const parsed = parseSearchInput(keywords);
 		const params = new URLSearchParams();
-		params.set('keywords', keywords);
+		params.set('keywords', parsed.keywords);
 		params.set('page', '1');
 		params.set('matchingStrategy', matchingStrategy);
+		if (parsed.filter) {
+			params.set('filter', parsed.filter);
+		}
 		goto(`/dashboard/search?${params.toString()}`, { keepFocus: true });
 	}
 
@@ -147,6 +205,7 @@
 				>{$t('app.search.search_button')}</Button
 			>
 		</div>
+		<p class="text-muted-foreground text-xs">{$t('app.search.filter_hint')}</p>
 		<div class="mt-1 text-xs font-medium">{$t('app.search.search_options')}</div>
 		<div class="flex items-center gap-2">
 			<Select.Root type="single" name="matchingStrategy" bind:value={matchingStrategy}>
@@ -302,9 +361,9 @@
 						<Pagination.Content>
 							<Pagination.Item>
 								<a
-									href={`/dashboard/search?keywords=${keywords}&page=${
+									href={`/dashboard/search?keywords=${encodeURIComponent(keywords)}&page=${
 										currentPage - 1
-									}&matchingStrategy=${matchingStrategy}`}
+									}&matchingStrategy=${matchingStrategy}${filter ? `&filter=${encodeURIComponent(filter)}` : ''}`}
 								>
 									<Pagination.PrevButton>
 										<ChevronLeft class="h-4 w-4" />
@@ -320,7 +379,7 @@
 								{:else}
 									<Pagination.Item>
 										<a
-											href={`/dashboard/search?keywords=${keywords}&page=${page.value}&matchingStrategy=${matchingStrategy}`}
+											href={`/dashboard/search?keywords=${encodeURIComponent(keywords)}&page=${page.value}&matchingStrategy=${matchingStrategy}${filter ? `&filter=${encodeURIComponent(filter)}` : ''}`}
 										>
 											<Pagination.Link
 												{page}
@@ -334,9 +393,9 @@
 							{/each}
 							<Pagination.Item>
 								<a
-									href={`/dashboard/search?keywords=${keywords}&page=${
+									href={`/dashboard/search?keywords=${encodeURIComponent(keywords)}&page=${
 										currentPage + 1
-									}&matchingStrategy=${matchingStrategy}`}
+									}&matchingStrategy=${matchingStrategy}${filter ? `&filter=${encodeURIComponent(filter)}` : ''}`}
 								>
 									<Pagination.NextButton>
 										<span class="hidden sm:block">{$t('app.search.next')}</span>

@@ -84,10 +84,8 @@
 			"in_email_body": "En el cuerpo del correo electrónico",
 			"in_attachment": "En el archivo adjunto: {{filename}}",
 			"prev": "Anterior",
-			"next": "Siguiente"
-		},
-		"roles": {
-			"title": "Gestión de roles",
+			"next": "Siguiente",
+			"filter_hint": "Consejo: Use filtros campo:valor, ej. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
 			"role_management": "Gestión de roles",
 			"create_new": "Crear nuevo",
 			"name": "Nombre",

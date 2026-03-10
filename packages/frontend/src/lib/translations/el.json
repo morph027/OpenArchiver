@@ -84,10 +84,8 @@
 			"in_email_body": "Στο σώμα του email",
 			"in_attachment": "Στο συνημμένο: {{filename}}",
 			"prev": "Προηγούμενο",
-			"next": "Επόμενο"
-		},
-		"roles": {
-			"title": "Διαχείριση ρόλων",
+			"next": "Επόμενο",
+			"filter_hint": "Συμβουλή: Χρησιμοποιήστε φίλτρα πεδίο:τιμή, π.χ. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
 			"role_management": "Διαχείριση ρόλων",
 			"create_new": "Δημιουργία νέου",
 			"name": "Όνομα",

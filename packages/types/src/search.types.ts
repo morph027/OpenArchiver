@@ -5,6 +5,7 @@ export type MatchingStrategy = 'last' | 'all' | 'frequency';
 export interface SearchQuery {
 	query: string;
 	filters?: Record<string, any>;
+	filter?: string;
 	page?: number;
 	limit?: number;
 	matchingStrategy?: MatchingStrategy;
