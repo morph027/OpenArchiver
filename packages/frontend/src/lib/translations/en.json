@@ -94,6 +94,8 @@
 			"prev": "Prev",
 			"next": "Next",
 			"filter_hint": "Tip: Use field:value filters, e.g. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
 			"title": "Role Management",
 			"role_management": "Role Management",
 			"create_new": "Create New",

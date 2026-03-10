@@ -86,6 +86,9 @@
 			"prev": "Préc",
 			"next": "Suiv",
 			"filter_hint": "Astuce : Utilisez des filtres champ:valeur, ex. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
+			"title": "Gestion des rôles",
 			"role_management": "Gestion des rôles",
 			"create_new": "Créer",
 			"name": "Nom",

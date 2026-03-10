@@ -86,6 +86,9 @@
 			"prev": "Vorige",
 			"next": "Volgende",
 			"filter_hint": "Tip: Gebruik veld:waarde filters, bijv. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
+			"title": "Rollenbeheer",
 			"role_management": "Rollenbeheer",
 			"create_new": "Nieuw aanmaken",
 			"name": "Naam",

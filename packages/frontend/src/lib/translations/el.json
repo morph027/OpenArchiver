@@ -86,6 +86,9 @@
 			"prev": "Προηγούμενο",
 			"next": "Επόμενο",
 			"filter_hint": "Συμβουλή: Χρησιμοποιήστε φίλτρα πεδίο:τιμή, π.χ. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
+			"title": "Διαχείριση ρόλων",
 			"role_management": "Διαχείριση ρόλων",
 			"create_new": "Δημιουργία νέου",
 			"name": "Όνομα",

@@ -94,6 +94,8 @@
 			"prev": "Zurück",
 			"next": "Weiter",
 			"filter_hint": "Tipp: Nutzen Sie Feld:Wert-Filter, z.B. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
 			"title": "Rollenverwaltung",
 			"role_management": "Rollenverwaltung",
 			"create_new": "Neu erstellen",

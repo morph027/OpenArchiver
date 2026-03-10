@@ -86,6 +86,9 @@
 			"prev": "前へ",
 			"next": "次へ",
 			"filter_hint": "ヒント: フィールド:値のフィルターを使用できます。例: from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
+			"title": "ロール管理",
 			"role_management": "ロール管理",
 			"create_new": "新規作成",
 			"name": "名前",

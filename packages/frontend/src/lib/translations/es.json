@@ -86,6 +86,9 @@
 			"prev": "Anterior",
 			"next": "Siguiente",
 			"filter_hint": "Consejo: Use filtros campo:valor, ej. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
+		},
+		"roles": {
+			"title": "Gestión de roles",
 			"role_management": "Gestión de roles",
 			"create_new": "Crear nuevo",
 			"name": "Nombre",
