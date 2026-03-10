@@ -84,7 +84,8 @@
 			"in_email_body": "No corpo do e-mail",
 			"in_attachment": "No anexo: {{filename}}",
 			"prev": "Anterior",
-			"next": "Próximo"
+			"next": "Próximo",
+			"filter_hint": "Dica: Use filtros campo:valor, ex. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
 		},
 		"roles": {
 			"title": "Gerenciamento de funções",

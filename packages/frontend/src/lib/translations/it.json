@@ -92,7 +92,8 @@
 			"in_email_body": "Nel corpo dell'email",  
 			"in_attachment": "Nell'allegato: {{filename}}",  
 			"prev": "Prec",  
-			"next": "Succ"  
+			"next": "Succ",
+			"filter_hint": "Suggerimento: Usa filtri campo:valore, es. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"  
 		},  
 		"roles": {  
 			"title": "Gestione ruoli",  

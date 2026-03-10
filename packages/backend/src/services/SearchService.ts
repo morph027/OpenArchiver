@@ -10,6 +10,34 @@ import type {
 import { FilterBuilder } from './FilterBuilder';
 import { AuditService } from './AuditService';
 
+const ALLOWED_FILTER_ATTRIBUTES = new Set([
+	'from',
+	'to',
+	'cc',
+	'bcc',
+	'timestamp',
+	'ingestionSourceId',
+	'userEmail',
+]);
+
+/**
+ * Sanitizes a Meilisearch filter string by verifying that every attribute
+ * referenced in the expression belongs to the known set of filterable fields.
+ * Returns the filter unchanged when it is safe, or undefined when it contains
+ * an unknown attribute (to prevent filter injection).
+ */
+function sanitizeFilter(filter: string): string | undefined {
+	// Match every identifier that is followed by a comparison operator or IN/NOT IN keyword.
+	const attrRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:=|!=|>=|<=|>|<|\bIN\b|\bNOT\s+IN\b)/gi;
+	let match: RegExpExecArray | null;
+	while ((match = attrRegex.exec(filter)) !== null) {
+		if (!ALLOWED_FILTER_ATTRIBUTES.has(match[1])) {
+			return undefined;
+		}
+	}
+	return filter;
+}
+
 export class SearchService {
 	private client: MeiliSearch;
 	private auditService: AuditService;
@@ -62,7 +90,7 @@ export class SearchService {
 		userId: string,
 		actorIp: string
 	): Promise<SearchResult> {
-		const { query, filters, page = 1, limit = 10, matchingStrategy = 'last' } = dto;
+		const { query, filters, filter, page = 1, limit = 10, matchingStrategy = 'last' } = dto;
 		const index = await this.getIndex<EmailDocument>('emails');
 
 		const searchParams: SearchParams = {
@@ -82,6 +110,18 @@ export class SearchService {
 				return `${key} = ${value}`;
 			});
 			searchParams.filter = filterStrings.join(' AND ');
+		}
+
+		// Apply the sanitized user-provided filter expression if present.
+		if (filter) {
+			const safeFilter = sanitizeFilter(filter);
+			if (safeFilter) {
+				if (searchParams.filter) {
+					searchParams.filter = `${searchParams.filter} AND ${safeFilter}`;
+				} else {
+					searchParams.filter = safeFilter;
+				}
+			}
 		}
 
 		// Create a filter based on the user's permissions.
@@ -109,6 +149,7 @@ export class SearchService {
 			details: {
 				query,
 				filters,
+				filter,
 				page,
 				limit,
 				matchingStrategy,

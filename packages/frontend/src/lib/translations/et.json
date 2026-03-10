@@ -84,7 +84,8 @@
 			"in_email_body": "E-kirja sisus",
 			"in_attachment": "Manuses: {{filename}}",
 			"prev": "Eelmine",
-			"next": "Järgmine"
+			"next": "Järgmine",
+			"filter_hint": "Vihje: Kasutage välja:väärtus filtreid, nt. from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
 		},
 		"roles": {
 			"title": "Rollide haldamine",

@@ -84,7 +84,8 @@
 			"in_email_body": "メール本文内",
 			"in_attachment": "添付ファイル内: {{filename}}",
 			"prev": "前へ",
-			"next": "次へ"
+			"next": "次へ",
+			"filter_hint": "ヒント: フィールド:値のフィルターを使用できます。例: from:user@example.com to:user@example.com after:2024-01-01 before:2024-12-31 source:id"
 		},
 		"roles": {
 			"title": "ロール管理",

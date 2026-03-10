@@ -8,34 +8,48 @@ async function performSearch(
 	keywords: string,
 	page: number,
 	matchingStrategy: MatchingStrategy,
-	event: RequestEvent
+	event: RequestEvent,
+	filter?: string
 ) {
 	if (!keywords) {
-		return { searchResult: null, keywords: '', page: 1, matchingStrategy: 'last' };
+		return { searchResult: null, keywords: '', page: 1, matchingStrategy: 'last', filter: '' };
 	}
 
 	try {
-		const response = await api(
-			`/search?keywords=${keywords}&page=${page}&limit=10&matchingStrategy=${matchingStrategy}`,
-			event,
-			{
-				method: 'GET',
-			}
-		);
+		const params = new URLSearchParams({
+			keywords,
+			page: String(page),
+			limit: '10',
+			matchingStrategy,
+		});
+		if (filter) {
+			params.set('filter', filter);
+		}
+		const response = await api(`/search?${params.toString()}`, event, {
+			method: 'GET',
+		});
 
 		if (!response.ok) {
 			const error = await response.json();
-			return { searchResult: null, keywords, page, matchingStrategy, error: error.message };
+			return {
+				searchResult: null,
+				keywords,
+				page,
+				matchingStrategy,
+				filter: filter ?? '',
+				error: error.message,
+			};
 		}
 
 		const searchResult = (await response.json()) as SearchResult;
-		return { searchResult, keywords, page, matchingStrategy };
+		return { searchResult, keywords, page, matchingStrategy, filter: filter ?? '' };
 	} catch (error) {
 		return {
 			searchResult: null,
 			keywords,
 			page,
 			matchingStrategy,
+			filter: filter ?? '',
 			error: error instanceof Error ? error.message : 'Unknown error',
 		};
 	}
@@ -46,5 +60,6 @@ export const load: PageServerLoad = async (event) => {
 	const page = parseInt(event.url.searchParams.get('page') || '1');
 	const matchingStrategy = (event.url.searchParams.get('matchingStrategy') ||
 		'last') as MatchingStrategy;
-	return performSearch(keywords, page, matchingStrategy, event);
+	const filter = event.url.searchParams.get('filter') || '';
+	return performSearch(keywords, page, matchingStrategy, event, filter);
 };
