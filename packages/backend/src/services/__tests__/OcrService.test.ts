@@ -4,7 +4,7 @@ import http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { OcrService } from '../OcrService';
 
-// Fake Tika server mimicking the Tika 3.x/4.x REST API (PUT /tika, GET /version)
+// Fake Tika server mimicking the Tika 4 REST API (PUT /tika/text, GET /version)
 let server: http.Server;
 let baseUrl: string;
 let putRequests: { url: string; headers: http.IncomingHttpHeaders; body: Buffer }[] = [];
@@ -16,7 +16,7 @@ const defaultResponder: typeof responder = (req, res, body) => {
 		res.end('Apache Tika 4.0.0');
 		return;
 	}
-	if (req.method === 'PUT' && req.url === '/tika') {
+	if (req.method === 'PUT' && req.url === '/tika/text') {
 		res.writeHead(200, { 'Content-Type': 'text/plain' });
 		res.end(`  extracted:${body.toString()}\n`);
 		return;
@@ -64,11 +64,11 @@ describe('OcrService (Tika REST API)', () => {
 		await assert.rejects(() => service.extractTextWithTika(Buffer.from('a'), 'text/plain'), /TIKA_URL/);
 	});
 
-	it('sends PUT /tika with Content-Type and Accept: text/plain and trims the result', async () => {
+	it('sends PUT /tika/text with Content-Type and Accept: text/plain and trims the result', async () => {
 		const result = await service.extractTextWithTika(Buffer.from('hello'), 'application/pdf');
 		assert.equal(result, 'extracted:hello');
 		assert.equal(putRequests.length, 1);
-		assert.equal(putRequests[0].url, '/tika');
+		assert.equal(putRequests[0].url, '/tika/text');
 		assert.equal(putRequests[0].headers['content-type'], 'application/pdf');
 		assert.equal(putRequests[0].headers['accept'], 'text/plain');
 	});
