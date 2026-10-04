@@ -324,6 +324,10 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<str
 		} catch (error) {
 			logger.error({ error }, 'OCR text extraction failed, falling back to legacy extraction');
 		}
+		if (buffer.length > 50 * 1024 * 1024) {
+			logger.warn('File too large for legacy text extraction, skipping fallback');
+			return '';
+		}
 		return await extractTextLegacy(buffer, mimeType);
 	} else {
 		// extract using legacy mode
