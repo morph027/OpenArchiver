@@ -103,6 +103,17 @@ describe('OcrService (Tika REST API)', () => {
 		assert.equal(putRequests[0].headers['content-type'], 'application/octet-stream');
 	});
 
+	it('sends attachments with an empty MIME type to Tika through extractText', async () => {
+		assert.equal(await extractText(Buffer.from('no mime'), ''), 'extracted:no mime');
+		assert.equal(putRequests[0].headers['content-type'], 'application/octet-stream');
+	});
+
+	it('skips extractText for an empty MIME type when Tika is not configured', async () => {
+		delete process.env.TIKA_URL;
+		assert.equal(await extractText(Buffer.from('no mime'), ''), '');
+		assert.equal(putRequests.length, 0);
+	});
+
 	it('caches results by buffer content', async () => {
 		const buf = Buffer.from('cache me');
 		await service.extractTextWithTika(buf, 'text/plain');

@@ -294,7 +294,7 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<str
 		return '';
 	}
 
-	if (!mimeType) {
+	if (!mimeType && !process.env.TIKA_URL) {
 		logger.warn('No MIME type provided for text extraction');
 		return '';
 	}
