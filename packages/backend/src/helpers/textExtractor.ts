@@ -316,11 +316,15 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<str
 		logger.debug(`Using Tika for text extraction: ${mimeType}`);
 		const ocrService = new OcrService();
 		try {
-			return await ocrService.extractTextWithTika(buffer, mimeType);
+			const tikaText = await ocrService.extractTextWithTika(buffer, mimeType);
+			if (tikaText) {
+				return tikaText;
+			}
+			logger.warn('Tika text extraction returned no text, falling back to legacy extraction');
 		} catch (error) {
-			logger.error({ error }, 'OCR text extraction failed, returning empty string');
-			return '';
+			logger.error({ error }, 'OCR text extraction failed, falling back to legacy extraction');
 		}
+		return await extractTextLegacy(buffer, mimeType);
 	} else {
 		// extract using legacy mode
 		return await extractTextLegacy(buffer, mimeType);

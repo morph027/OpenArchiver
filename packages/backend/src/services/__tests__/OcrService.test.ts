@@ -2,6 +2,7 @@ import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import type { AddressInfo } from 'node:net';
+import { extractText } from '../../../helpers/textExtractor';
 import { OcrService } from '../OcrService';
 
 // Fake Tika server mimicking the Tika 4 REST API (PUT /tika/text, GET /version)
@@ -137,9 +138,14 @@ describe('OcrService (Tika REST API)', () => {
 		assert.equal(putRequests.length, 1);
 	});
 
-	it('returns an empty string when Tika is unreachable so callers can use legacy extraction', async () => {
+	it('returns an empty string when Tika is unreachable', async () => {
 		process.env.TIKA_URL = 'http://127.0.0.1:1';
 		assert.equal(await service.extractTextWithTika(Buffer.from('x'), 'text/plain'), '');
+	});
+
+	it('falls back to legacy extraction through extractText when Tika is unreachable', async () => {
+		process.env.TIKA_URL = 'http://127.0.0.1:1';
+		assert.equal(await extractText(Buffer.from('legacy text'), 'text/plain'), 'legacy text');
 	});
 
 	it('clearTikaCache resets statistics', async () => {
