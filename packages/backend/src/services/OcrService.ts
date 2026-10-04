@@ -109,6 +109,8 @@ class TikaSemaphore {
 	}
 }
 
+// Compatibility note: Tika is used as a remote REST service only (PUT /tika, GET /version),
+// which is unchanged between Tika 3.x and 4.0.x (see docker-compose.yml for the pinned image).
 export class OcrService {
 	private tikaCache = new TikaCache();
 	private tikaSemaphore = new TikaSemaphore();
