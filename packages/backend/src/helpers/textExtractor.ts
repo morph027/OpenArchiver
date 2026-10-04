@@ -294,7 +294,7 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<str
 		return '';
 	}
 
-	if (!mimeType) {
+	if (!mimeType && !process.env.TIKA_URL) {
 		logger.warn('No MIME type provided for text extraction');
 		return '';
 	}
@@ -316,11 +316,19 @@ export async function extractText(buffer: Buffer, mimeType: string): Promise<str
 		logger.debug(`Using Tika for text extraction: ${mimeType}`);
 		const ocrService = new OcrService();
 		try {
-			return await ocrService.extractTextWithTika(buffer, mimeType);
+			const tikaText = await ocrService.extractTextWithTika(buffer, mimeType);
+			if (tikaText) {
+				return tikaText;
+			}
+			logger.warn('Tika text extraction returned no text, falling back to legacy extraction');
 		} catch (error) {
-			logger.error({ error }, 'OCR text extraction failed, returning empty string');
+			logger.error({ error }, 'OCR text extraction failed, falling back to legacy extraction');
+		}
+		if (buffer.length > 50 * 1024 * 1024) {
+			logger.warn('File too large for legacy text extraction, skipping fallback');
 			return '';
 		}
+		return await extractTextLegacy(buffer, mimeType);
 	} else {
 		// extract using legacy mode
 		return await extractTextLegacy(buffer, mimeType);

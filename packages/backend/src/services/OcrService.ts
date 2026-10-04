@@ -143,10 +143,10 @@ export class OcrService {
 
 			// DNS fallback: If "tika" hostname, also try localhost
 			const urlsToTry = [
-				`${tikaUrl}/tika`,
+				`${tikaUrl}/tika/text`,
 				// Fallback falls DNS-Problem mit "tika" hostname
 				...(tikaUrl.includes('://tika:')
-					? [`${tikaUrl.replace('://tika:', '://localhost:')}/tika`]
+					? [`${tikaUrl.replace('://tika:', '://localhost:')}/tika/text`]
 					: []),
 			];
 

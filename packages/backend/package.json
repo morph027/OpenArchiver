@@ -10,6 +10,7 @@
 		"./*": "./dist/*.js"
 	},
 	"scripts": {
+		"test": "LOG_LEVEL=silent ts-node-dev --transpile-only src/services/__tests__/OcrService.test.ts",
 		"build": "tsc && pnpm copy-assets",
 		"dev": "tsc --watch",
 		"copy-assets": "cp -r src/locales dist/locales",
